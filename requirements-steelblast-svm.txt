@@ -1,0 +1,5 @@
+joblib
+numpy
+PyWavelets
+scikit-image
+scikit-learn
