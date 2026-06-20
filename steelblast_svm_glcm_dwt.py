@@ -50,9 +50,9 @@ CLASS_NAMES = ["good", "not-good"]
 
 @dataclass(frozen=True)
 class FeatureConfig:
-    image_size: int = 256
+    image_size: int = 256 # Resize images to image-size x image-size before feature extraction. This standardization is important for consistent feature extraction, especially for GLCM and DWT, which can be sensitive to image dimensions. A size of 256x256 provides a good balance between retaining detail and keeping computational requirements manageable.
 
-    glcm_levels: int = 32
+    glcm_levels: int = 32 # The number of gray levels to quantize the image into for GLCM calculation. Reducing to 32 levels helps manage the size of the co-occurrence matrix and focuses on broader texture patterns, which can be beneficial for classification while keeping computational complexity reasonable. TODO validate that with paper
     glcm_distances: tuple[int, ...] = (1, 2, 4, 8)
     glcm_angles: tuple[float, ...] = (0.0, np.pi / 4, np.pi / 2, 3 * np.pi / 4)
     glcm_properties: tuple[str, ...] = (
@@ -91,7 +91,7 @@ def read_grayscale_image(image_path: Path, image_size: int) -> np.ndarray:
 
     if image.ndim == 3:
         image = image[..., :3]
-        image = rgb2gray(image)
+        image = rgb2gray(image) # Convert to grayscale using luminosity method, which accounts for human perception of color brightness. This is important for texture analysis with GLCM, as it relies on intensity values. The resulting grayscale image will have values in the range [0, 1], which is suitable for further processing and feature extraction.
 
     image = resize(
         image,
@@ -158,7 +158,7 @@ def extract_glcm_features(image: np.ndarray, config: FeatureConfig) -> np.ndarra
 
     return np.asarray(features, dtype=np.float32)
 
-
+# DWT coefficients can have a wide range of values, including negative and positive numbers. To capture the texture information effectively, we compute several statistics on the coefficients, such as mean, standard deviation, energy (mean of squared values), and entropy (which measures the randomness or complexity of the coefficients). Additionally, we include percentiles to capture the distribution of coefficient values. These features help summarize the texture information contained in the DWT coefficients in a way that is useful for classification.
 def describe_coefficients(coefficients: np.ndarray) -> list[float]:
     values = coefficients.ravel().astype(np.float64)
     abs_values = np.abs(values)
@@ -396,6 +396,7 @@ def save_classification_case_heatmaps(
             "confidence": confidence,
             "max_activation": max_activation,
         }
+        print(heatmap_paths[case_name])
 
     return heatmap_paths
 
@@ -419,14 +420,14 @@ def balanced_limit(
 def train_model(X_train: np.ndarray, y_train: np.ndarray, n_jobs: int) -> GridSearchCV:
     pipeline = Pipeline(
         steps=[
-            ("scaler", StandardScaler()),
-            ("svm", SVC(kernel="rbf", class_weight="balanced")),
+            ("scaler", StandardScaler()), # StandardScaler standardizes features by removing the mean and scaling to unit variance, which is important for SVM performance since it relies on distances in feature space. This ensures that all features contribute equally to the model and prevents features with larger scales from dominating the decision boundary.
+            ("svm", SVC(kernel="rbf", class_weight="balanced")), # The SVC with RBF kernel is a powerful non-linear classifier that can capture complex relationships in the data. The class_weight="balanced" option automatically adjusts weights inversely proportional to class frequencies, which helps address any class imbalance in the dataset and can improve performance on the minority class.
         ]
     )
-
+    # Define the hyperparameter grid for GridSearchCV
     param_grid = {
-        "svm__C": [0.1, 1, 10, 100],
-        "svm__gamma": ["scale", 0.01, 0.001, 0.0001],
+        "svm__C": [0.1, 1, 10, 100], # The C parameter controls the trade-off between achieving a low training error and a low testing error (generalization). A smaller C encourages a simpler decision boundary that may misclassify some training points but generalizes better, while a larger C tries to classify all training points correctly, which can lead to overfitting. Testing a range of values allows us to find the optimal balance for our dataset.
+        "svm__gamma": ["scale", 0.01, 0.001, 0.0001], # The gamma parameter defines how far the influence of a single training example reaches. A low gamma means that the model considers points at a larger distance from the decision boundary, resulting in a smoother decision surface. A high gamma focuses more on points close to the decision boundary, which can lead to a more complex model that may overfit. Including "scale" allows the model to automatically adjust gamma based on the number of features, which can be a good default choice.
     }
 
     min_class_count = int(np.bincount(y_train).min())
@@ -435,8 +436,10 @@ def train_model(X_train: np.ndarray, y_train: np.ndarray, n_jobs: int) -> GridSe
     if n_splits < 2:
         raise ValueError("Each class needs at least two training images.")
     #Stratified splitting keeps the same class proportions in every fold as in the whole dataset.
+    #random_state ensures reproducibility, and shuffle=True randomizes the data before splitting to avoid any order bias.
     cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
     #CV cross validation
+    #GridSearchCV exhaustively tries all combinations of the specified hyperparameters (C and gamma for the SVM) and evaluates each combination using cross-validation on the training data. It selects the combination that yields the best average F1 score across the folds.
     search = GridSearchCV(
         pipeline,
         param_grid=param_grid,
@@ -579,7 +582,6 @@ def main() -> None:
         args.occlusion_stride,
     )
 
-    joblib.dump(model, MODEL_PATH)
 
     metrics = {
         "best_params": model.best_params_,
