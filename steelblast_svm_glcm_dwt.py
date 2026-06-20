@@ -19,10 +19,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import tempfile
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
+os.environ.setdefault("MPLCONFIGDIR", str(Path(tempfile.gettempdir()) / "matplotlib"))
+
 import joblib
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 import numpy as np
 import pywt
 from skimage.color import rgb2gray
@@ -58,7 +66,7 @@ class FeatureConfig:
     dwt_wavelet: str = "db2" #?
     dwt_level: int = 3
 
-
+# load either train or test images 
 def load_split(dataset_dir: Path, split: str) -> tuple[list[Path], np.ndarray]:
     image_paths: list[Path] = []
     labels: list[int] = []
@@ -99,6 +107,28 @@ def read_grayscale_image(image_path: Path, image_size: int) -> np.ndarray:
     return image
 
 
+def read_display_image(image_path: Path, image_size: int) -> np.ndarray:
+    image = imread(image_path)
+
+    if image.ndim == 2:
+        image = np.repeat(image[..., np.newaxis], 3, axis=2)
+    else:
+        image = image[..., :3]
+
+    image = resize(
+        image,
+        (image_size, image_size),
+        anti_aliasing=True,
+        preserve_range=True,
+    )
+
+    image = image.astype(np.float32)
+    if image.max() > 1.0:
+        image /= 255.0
+
+    return np.clip(image, 0.0, 1.0)
+
+
 def quantize_image(image: np.ndarray, levels: int) -> np.ndarray:
     clipped = np.clip(image, 0.0, 1.0)
     quantized = np.floor(clipped * (levels - 1)).astype(np.uint8)
@@ -106,7 +136,9 @@ def quantize_image(image: np.ndarray, levels: int) -> np.ndarray:
 
 
 def extract_glcm_features(image: np.ndarray, config: FeatureConfig) -> np.ndarray:
+    #reduce to 32 intensity levels
     quantized = quantize_image(image, config.glcm_levels)
+    # Co-occurrence Matrix
     glcm = graycomatrix(
         quantized,
         distances=config.glcm_distances,
@@ -117,6 +149,7 @@ def extract_glcm_features(image: np.ndarray, config: FeatureConfig) -> np.ndarra
     )
 
     features: list[float] = []
+    # extract 6 configured features
     for prop in config.glcm_properties:
         values = graycoprops(glcm, prop).ravel()
         features.extend(values)
@@ -149,6 +182,7 @@ def describe_coefficients(coefficients: np.ndarray) -> list[float]:
 
 
 def extract_dwt_features(image: np.ndarray, config: FeatureConfig) -> np.ndarray:
+    # Apply wavelet decomposition
     coeffs = pywt.wavedec2(
         image,
         wavelet=config.dwt_wavelet,
@@ -160,6 +194,7 @@ def extract_dwt_features(image: np.ndarray, config: FeatureConfig) -> np.ndarray
     approximation = coeffs[0]
     features.extend(describe_coefficients(approximation))
 
+    # Repeat across 3 levels
     for horizontal, vertical, diagonal in coeffs[1:]:
         features.extend(describe_coefficients(horizontal))
         features.extend(describe_coefficients(vertical))
@@ -170,11 +205,17 @@ def extract_dwt_features(image: np.ndarray, config: FeatureConfig) -> np.ndarray
 
 def extract_features(image_path: Path, config: FeatureConfig) -> np.ndarray:
     image = read_grayscale_image(image_path, config.image_size)
+    return extract_features_from_image(image, config)
+
+# get Final feature vector
+def extract_features_from_image(image: np.ndarray, config: FeatureConfig) -> np.ndarray:
     glcm_features = extract_glcm_features(image, config)
     dwt_features = extract_dwt_features(image, config)
     return np.concatenate([glcm_features, dwt_features])
 
-
+# Loops through all images
+# Extracts features
+# Stacks them into matrix:
 def build_feature_matrix(
     image_paths: list[Path],
     config: FeatureConfig,
@@ -188,6 +229,175 @@ def build_feature_matrix(
             print(f"{split_name}: extracted {index}/{len(image_paths)} images")
 
     return np.vstack(features)
+
+# Computes confidence score for each prediction
+def predicted_label_confidences(model: Pipeline, features: np.ndarray) -> np.ndarray:
+    predictions = model.predict(features)
+    # decision_function gives distance to the separating hyperplane. For binary classification, it's a single score where positive means class 1 and negative means class 0. Magnitude of distance = confidence
+    scores = model.decision_function(features)
+    # 
+    if scores.ndim == 1:
+        positive_class = int(model.classes_[1])
+        signed_scores = np.where(predictions == positive_class, scores, -scores)
+        return signed_scores.astype(np.float64)
+
+    return np.asarray(
+        [scores[index, np.flatnonzero(model.classes_ == label)[0]] for index, label in enumerate(predictions)],
+        dtype=np.float64,
+    )
+
+
+def prediction_confidence(model: Pipeline, features: np.ndarray, label: int) -> float:
+    scores = model.decision_function(features.reshape(1, -1))
+
+    if np.ndim(scores) == 1:
+        positive_class = int(model.classes_[1])
+        score = float(scores[0])
+        return score if label == positive_class else -score
+
+    class_index = int(np.flatnonzero(model.classes_ == label)[0])
+    return float(scores[0, class_index])
+
+# Mask parts of the image and see how prediction confidence changes.
+# Steps:
+# 1. Compute base prediction confidence
+# 2. Slide a patch over the image
+# 3. Replace patch with median value
+# 4. Recompute prediction
+# 5. Measure confidence drop
+def compute_occlusion_focus_heatmap(
+    image: np.ndarray,
+    model: Pipeline,
+    predicted_label: int,
+    config: FeatureConfig,
+    patch_size: int, # The size of the square region (in pixels) that gets “hidden” at each step.
+    stride: int, # The number of pixels the patch moves horizontally and vertically between steps. Smaller strides create smoother heatmaps but require more computations.
+) -> np.ndarray:
+    base_features = extract_features_from_image(image, config)
+    base_confidence = prediction_confidence(model, base_features, predicted_label)
+    heatmap = np.zeros_like(image, dtype=np.float32)
+    counts = np.zeros_like(image, dtype=np.float32)
+    fill_value = float(np.median(image))
+    height, width = image.shape
+
+    for top in range(0, height, stride):
+        bottom = min(top + patch_size, height)
+        top = max(0, bottom - patch_size)
+
+        for left in range(0, width, stride):
+            right = min(left + patch_size, width)
+            left = max(0, right - patch_size)
+
+            occluded = image.copy()
+            occluded[top:bottom, left:right] = fill_value
+            occluded_features = extract_features_from_image(occluded, config)
+            occluded_confidence = prediction_confidence(model, occluded_features, predicted_label)
+            importance = max(0.0, base_confidence - occluded_confidence)
+
+            heatmap[top:bottom, left:right] += importance
+            counts[top:bottom, left:right] += 1
+
+    return np.divide(heatmap, counts, out=np.zeros_like(heatmap), where=counts > 0)
+
+
+def save_focus_pair(
+    display_image: np.ndarray,
+    heatmap: np.ndarray,
+    title: str,
+    output_path: Path,
+) -> None:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    fig, axes = plt.subplots(1, 2, figsize=(9, 4.5), constrained_layout=True)
+    axes[0].imshow(display_image)
+    axes[0].set_title("Example image")
+    axes[0].set_axis_off()
+
+    axes[1].imshow(display_image)
+    vmax = float(heatmap.max()) if heatmap.size and heatmap.max() > 0 else 1.0
+    overlay = axes[1].imshow(heatmap, cmap="jet", alpha=0.62, vmin=0, vmax=vmax)
+    axes[1].set_title("Activation heatmap")
+    axes[1].set_axis_off()
+    fig.colorbar(overlay, ax=axes[1], label="Decision-score drop")
+    fig.suptitle(title, fontsize=16)
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+
+
+def save_classification_case_heatmaps(
+    test_paths: list[Path],
+    y_test: np.ndarray,
+    y_pred: np.ndarray,
+    X_test: np.ndarray,
+    model: Pipeline,
+    config: FeatureConfig,
+    output_dir: Path,
+    patch_size: int,
+    stride: int,
+) -> dict[str, dict[str, object]]:
+    heatmap_paths: dict[str, dict[str, object]] = {}
+    confidences = predicted_label_confidences(model, X_test)
+    case_definitions = {
+        "true_positive": (1, 1),
+        "false_positive": (0, 1),
+        "false_negative": (1, 0),
+        "true_negative": (0, 0),
+    }
+
+    # iterate over TP/FP/FN/TN cases, find the most confident example of each, generate heatmap, and save results
+    for case_name, (actual_label, predicted_label) in case_definitions.items():
+        # find indices of all test cases that match the actual and predicted labels for this case type
+        case_indices = [
+            index
+            for index, (actual, predicted) in enumerate(zip(y_test, y_pred))
+            if actual == actual_label and predicted == predicted_label
+        ]
+        # sort those indices by confidence score, highest first, so the most confident example is at the front
+        case_indices = sorted(case_indices, key=lambda index: confidences[index], reverse=True)
+        case_dir = output_dir / case_name
+        case_dir.mkdir(parents=True, exist_ok=True)
+        # select the most confident example for this case type, if any exist
+        selected_index = case_indices[0] if case_indices else None
+        output_path = case_dir / f"{case_name}_focus_heatmap.png"
+        source_image = None
+        confidence = None
+        max_activation = None
+
+        if selected_index is not None:
+            image_path = test_paths[selected_index]
+            grayscale_image = read_grayscale_image(image_path, config.image_size)
+            display_image = read_display_image(image_path, config.image_size)
+            heatmap = compute_occlusion_focus_heatmap(
+                grayscale_image,
+                model,
+                int(y_pred[selected_index]),
+                config,
+                patch_size,
+                stride,
+            )
+            title = (
+                f"{case_name.replace('_', ' ').title()} | "
+                f"actual {CLASS_NAMES[int(y_test[selected_index])]}, "
+                f"predicted {CLASS_NAMES[int(y_pred[selected_index])]}"
+            )
+            # save the side-by-side image and heatmap visualization
+            save_focus_pair(display_image, heatmap, title, output_path)
+            source_image = str(image_path)
+            confidence = float(confidences[selected_index])
+            max_activation = float(heatmap.max())
+        # record the results for this case type, including whether a heatmap was generated and the confidence/activation values
+        heatmap_paths[case_name] = {
+            "actual_label": CLASS_NAMES[actual_label],
+            "predicted_label": CLASS_NAMES[predicted_label],
+            "available_images": len(case_indices),
+            "generated_images": int(selected_index is not None),
+            "source_image": source_image,
+            "heatmap": str(output_path) if selected_index is not None else None,
+            "confidence": confidence,
+            "max_activation": max_activation,
+        }
+
+    return heatmap_paths
 
 
 def balanced_limit(
@@ -205,7 +415,7 @@ def balanced_limit(
 
     return selected_paths, np.asarray(selected_labels, dtype=np.int64)
 
-
+# train model using SVM (RBF kernel)
 def train_model(X_train: np.ndarray, y_train: np.ndarray, n_jobs: int) -> GridSearchCV:
     pipeline = Pipeline(
         steps=[
@@ -262,6 +472,24 @@ def parse_args() -> argparse.Namespace:
         help="Where to save test metrics as JSON.",
     )
     parser.add_argument(
+        "--heatmap-dir",
+        type=Path,
+        default=Path("steelblast_svm_glcm_dwt_focus_heatmaps"),
+        help="Directory where TP/FP/FN/TN focus heatmap PNG files will be saved.",
+    )
+    parser.add_argument(
+        "--occlusion-patch-size",
+        type=int,
+        default=32,
+        help="Square patch size for occlusion-sensitivity focus heatmaps.",
+    )
+    parser.add_argument(
+        "--occlusion-stride",
+        type=int,
+        default=16,
+        help="Stride between occlusion patches. Smaller values give smoother but slower heatmaps.",
+    )
+    parser.add_argument(
         "--image-size",
         type=int,
         default=256,
@@ -284,11 +512,21 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    # for heatmap generation, we need a reasonable patch size and stride to see meaningful differences in confidence when occluding parts of the image. Enforce positive integers for these parameters.
+    if args.occlusion_patch_size <= 0:
+        raise ValueError("--occlusion-patch-size must be greater than zero.")
+    if args.occlusion_stride <= 0:
+        raise ValueError("--occlusion-stride must be greater than zero.")
+
+    
+ 
+
     config = FeatureConfig(image_size=args.image_size)
 
     train_paths, y_train = load_split(args.dataset_dir, "train")
     test_paths, y_test = load_split(args.dataset_dir, "test")
 
+    # for a quick training
     if args.quick_limit is not None:
         train_paths, y_train = balanced_limit(train_paths, y_train, args.quick_limit)
         test_paths, y_test = balanced_limit(test_paths, y_test, args.quick_limit)
@@ -300,11 +538,19 @@ def main() -> None:
     X_train = build_feature_matrix(train_paths, config, "train")
     X_test = build_feature_matrix(test_paths, config, "test")
 
-    print(f"Training feature matrix: {X_train.shape}")
-    print(f"Testing feature matrix:  {X_test.shape}")
+    MODEL_PATH = "steelblast_svm_glcm_dwt.joblib"
 
-    search = train_model(X_train, y_train, args.n_jobs)
-    y_pred = search.predict(X_test)
+    if os.path.exists(MODEL_PATH):
+        print("Loading existing model...")
+        model = joblib.load(MODEL_PATH)
+    else:
+
+        print(f"Training feature matrix: {X_train.shape}")
+        print(f"Testing feature matrix:  {X_test.shape}")
+
+        model = train_model(X_train, y_train, args.n_jobs)
+
+    y_pred = model.predict(X_test)
 
     report = classification_report(
         y_test,
@@ -315,33 +561,47 @@ def main() -> None:
     )
     matrix = confusion_matrix(y_test, y_pred).tolist()
 
-    print(f"Best parameters: {search.best_params_}")
-    print(f"Best CV F1: {search.best_score_:.4f}")
+    print(f"Best parameters: {model.best_params_}")
+    print(f"Best CV F1: {model.best_score_:.4f}")
     print(classification_report(y_test, y_pred, target_names=CLASS_NAMES, zero_division=0))
     print("Confusion matrix:")
     print(np.asarray(matrix))
 
-    model_bundle = {
-        "model": search.best_estimator_,
-        "feature_config": asdict(config),
-        "class_names": CLASS_NAMES,
-        "labels": LABELS,
-    }
-    joblib.dump(model_bundle, args.output_model)
+    heatmap_paths = save_classification_case_heatmaps(
+        test_paths,
+        y_test,
+        y_pred,
+        X_test,
+        model.best_estimator_,
+        config,
+        args.heatmap_dir,
+        args.occlusion_patch_size,
+        args.occlusion_stride,
+    )
+
+    joblib.dump(model, MODEL_PATH)
 
     metrics = {
-        "best_params": search.best_params_,
-        "best_cv_f1": float(search.best_score_),
+        "best_params": model.best_params_,
+        "best_cv_f1": float(model.best_score_),
         "classification_report": report,
         "confusion_matrix": matrix,
         "train_images": len(train_paths),
         "test_images": len(test_paths),
         "feature_count": int(X_train.shape[1]),
+        "heatmap_method": "occlusion_sensitivity",
+        "heatmap_settings": {
+            "heatmaps_per_case": 1,
+            "occlusion_patch_size": args.occlusion_patch_size,
+            "occlusion_stride": args.occlusion_stride,
+        },
+        "heatmaps": heatmap_paths,
     }
     args.metrics_json.write_text(json.dumps(metrics, indent=2))
 
     print(f"Saved model to:   {args.output_model.resolve()}")
     print(f"Saved metrics to: {args.metrics_json.resolve()}")
+    print(f"Saved heatmaps to: {args.heatmap_dir.resolve()}")
 
 
 if __name__ == "__main__":

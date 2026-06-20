@@ -3,5 +3,7 @@ steelblast_svm_glcm_dwt_metrics.json
 steelblast_svm_glcm_dwt_smoke_metrics.json
 steelblast_svm_glcm_dwt_smoke.joblib
 steelblast_svm_glcm_dwt.joblib
+steelblast_svm_glcm_dwt_heatmaps/
+steelblast_svm_glcm_dwt_focus_heatmaps/
 __pycache__/steelblast_svm_glcm_dwt.cpython-314.pyc
 .DS_Store
