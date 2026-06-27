@@ -15,11 +15,11 @@ steelblast_vgg16_predictions.png
 steelblast_vgg16_training_history.png
 steelblast_vgg16.h5
 steelblast_inceptionv3_best.h5
-steelblast_inceptionv3_metrics.json
+steelblast_inceptionv3_metrics*.json
 steelblast_inceptionv3_training_history.png
 steelblast_inceptionv3.h5
 steelblast_resnet50_best.h5
 steelblast_resnet50_metrics.json
 steelblast_resnet50_training_history.png
 steelblast_resnet50.h5
-steelblast_resnet50_metrics_*.json
+steelblast_resnet50_metrics*.json
