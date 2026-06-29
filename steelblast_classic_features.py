@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
@@ -13,6 +14,27 @@ from skimage.transform import resize
 
 LABELS = {"good": 0, "not-good": 1}
 CLASS_NAMES = ["good", "not-good"]
+
+
+@dataclass(frozen=True)
+class FeatureExtractionConfig:
+    image_size: int = 256
+    illumination_normalization: str = "clahe"
+    clahe_clip_limit: float = 0.01
+    contrast_percentiles: tuple[float, float] = (2.0, 98.0)
+    glcm_levels: int = 32
+    glcm_distances: tuple[int, ...] = (1, 2, 4, 8)
+    glcm_angles: tuple[float, ...] = (0.0, np.pi / 4, np.pi / 2, 3 * np.pi / 4)
+    glcm_properties: tuple[str, ...] = (
+        "contrast",
+        "dissimilarity",
+        "homogeneity",
+        "energy",
+        "correlation",
+        "ASM",
+    )
+    dwt_wavelet: str = "db2"
+    dwt_level: int = 3
 
 
 def extract_features_from_image(image: np.ndarray, config: object) -> np.ndarray:
