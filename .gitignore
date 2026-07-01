@@ -5,7 +5,7 @@ steelblast_svm_glcm_dwt_smoke.joblib
 steelblast_svm_glcm_dwt.joblib
 steelblast_svm_glcm_dwt_heatmaps/
 steelblast_svm_glcm_dwt_focus_heatmaps/
-__pycache__/steelblast_svm_glcm_dwt.cpython-314.pyc
+__pycache__/*
 .DS_Store
 dataset_samples.png
 steelblast_vgg16_best.h5
@@ -24,5 +24,6 @@ steelblast_resnet50_training_history.png
 steelblast_resnet50.h5
 steelblast_resnet50_metrics*.json
 steelblast_transfer_learning_occlusion_heatmaps/
-__pycache__/steelblast_classic_features.cpython-311.pyc
 bias_analysis_metrics.json
+bias_analysis_metrics_svm_glcm_dwt.json
+bias_analysis_metrics_transfer_resnet50.json
