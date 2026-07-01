@@ -16,6 +16,26 @@ LABELS = {"good": 0, "not-good": 1}
 CLASS_NAMES = ["good", "not-good"]
 
 
+def load_split(dataset_dir: Path, split: str) -> tuple[list[Path], np.ndarray]:
+    """Load image paths and labels for a train/test split."""
+    image_paths: list[Path] = []
+    labels: list[int] = []
+
+    for class_name, label in LABELS.items():
+        class_dir = dataset_dir / split / class_name
+        if not class_dir.exists():
+            raise FileNotFoundError(f"Missing expected folder: {class_dir}")
+
+        paths = sorted(class_dir.glob("*.png"))
+        image_paths.extend(paths)
+        labels.extend([label] * len(paths))
+
+    if not image_paths:
+        raise FileNotFoundError(f"No .png images found in {dataset_dir / split}")
+
+    return image_paths, np.asarray(labels, dtype=np.int64)
+
+
 @dataclass(frozen=True)
 class FeatureExtractionConfig:
     image_size: int = 256

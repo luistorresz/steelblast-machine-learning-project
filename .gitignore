@@ -25,3 +25,4 @@ steelblast_resnet50.h5
 steelblast_resnet50_metrics*.json
 steelblast_transfer_learning_occlusion_heatmaps/
 __pycache__/steelblast_classic_features.cpython-311.pyc
+bias_analysis_metrics.json
