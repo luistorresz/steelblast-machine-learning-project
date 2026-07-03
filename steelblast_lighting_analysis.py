@@ -30,7 +30,6 @@ PERTURBATIONS: tuple[str, ...] = (
 
 NORMAL_LIGHTING_TESTS: set[str] = {
     "dark_25",
-    "dark_50",
     "offset_plus_10",
     "offset_minus_10",
     "low_contrast",

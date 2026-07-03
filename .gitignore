@@ -25,5 +25,5 @@ steelblast_resnet50.h5
 steelblast_resnet50_metrics*.json
 steelblast_transfer_learning_occlusion_heatmaps/
 bias_analysis_metrics.json
-bias_analysis_metrics_svm_glcm_dwt.json
-bias_analysis_metrics_transfer_resnet50.json
+bias_analysis_metrics_svm_glcm_dwt*.json
+bias_analysis_metrics_transfer_resnet50*.json
