@@ -47,6 +47,13 @@ class RobustnessSummary:
     note: str
 
 
+@dataclass(frozen=True)
+class IlluminationNormalizationConfig:
+    illumination_normalization: str = "clahe"
+    clahe_clip_limit: float = 0.01
+    contrast_percentiles: tuple[float, float] = (2.0, 98.0)
+
+
 def perturb_lighting(image: np.ndarray, perturbation: str) -> np.ndarray:
     if perturbation == "baseline":
         return np.clip(image, 0.0, 1.0)
@@ -217,20 +224,52 @@ def _load_rgb_image_01(image_path: Path, image_size: tuple[int, int]) -> np.ndar
     return np.clip(image, 0.0, 1.0)
 
 
+def _normalize_rgb_illumination(
+    image: np.ndarray,
+    config: IlluminationNormalizationConfig,
+) -> np.ndarray:
+    # Reuse grayscale normalization channel-wise for RGB transfer inputs.
+    normalized_channels = [
+        normalize_illumination(image[..., channel_index], config)
+        for channel_index in range(image.shape[-1])
+    ]
+    return np.clip(np.stack(normalized_channels, axis=-1), 0.0, 1.0).astype(np.float32)
+
+
 def build_transfer_predict_fn(
     image_paths: list[Path],
     model,
     image_size: tuple[int, int],
     preprocess_input_fn: Callable[[np.ndarray], np.ndarray],
     threshold: float = 0.5,
+    use_illumination_normalization: bool = False,
+    illumination_normalization: str = "clahe",
+    clahe_clip_limit: float = 0.01,
+    contrast_percentiles: tuple[float, float] = (2.0, 98.0),
+    normalize_baseline: bool = True,
 ) -> Callable[[str], np.ndarray]:
     base_images = [_load_rgb_image_01(image_path, image_size) for image_path in image_paths]
+    normalization_config = IlluminationNormalizationConfig(
+        illumination_normalization=illumination_normalization,
+        clahe_clip_limit=clahe_clip_limit,
+        contrast_percentiles=contrast_percentiles,
+    )
 
     def predict_for_perturbation(perturbation: str) -> np.ndarray:
-        batch = np.stack(
-            [perturb_lighting(image, perturbation) for image in base_images],
-            axis=0,
-        )
+        processed_images: list[np.ndarray] = []
+        for image in base_images:
+            perturbed_image = perturb_lighting(image, perturbation)
+            should_normalize = use_illumination_normalization and (
+                normalize_baseline or perturbation != "baseline"
+            )
+            if should_normalize:
+                perturbed_image = _normalize_rgb_illumination(
+                    perturbed_image,
+                    normalization_config,
+                )
+            processed_images.append(perturbed_image)
+
+        batch = np.stack(processed_images, axis=0)
         batch = preprocess_input_fn((batch * 255.0).astype(np.float32))
         probabilities = model.predict(batch, verbose=0).ravel()
         return (probabilities >= threshold).astype(np.int64)
