@@ -34,6 +34,7 @@ NORMAL_LIGHTING_TESTS: set[str] = {
     "offset_minus_10",
     "low_contrast",
     "high_contrast",
+    "bright_25",
 }
 
 
