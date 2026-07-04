@@ -21,10 +21,11 @@ steelblast_inceptionv3.h5
 steelblast_resnet50_best.h5
 steelblast_resnet50_metrics.json
 steelblast_resnet50_training_history.png
-steelblast_resnet50.h5
-steelblast_resnet50_metrics*.json
+steelblast_resnet50*.h5
+steelblast_resnet50*.json
 steelblast_transfer_learning_occlusion_heatmaps/
 bias_analysis_metrics.json
 bias_analysis_metrics_svm_glcm_dwt*.json
 bias_analysis_metrics_transfer_resnet50*.json
 steelblast_svm_bright25_search_20260703_163405.json
+steelblast_resnet50_baseline_full_best.h5
