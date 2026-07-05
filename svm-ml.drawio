@@ -1,11 +1,62 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Page-1" id="hEYgBLBoZn8GvoCW3pwb">
-    <mxGraphModel dx="1204" dy="761" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2031" dy="761" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="qdIRdacZ9aRxpwBwOakk-1" parent="1" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.lambda_function;fillColor=#F58534;gradientColor=none;" value="" vertex="1">
+        <mxCell id="qdIRdacZ9aRxpwBwOakk-1" parent="1" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.lambda_function;fillColor=#F58534;gradientColor=none;" value="FAST API SERVICE" vertex="1">
           <mxGeometry height="72" width="69" x="380" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="Btv_CyVeGUCVNPXlEjLH-2" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="qdIRdacZ9aRxpwBwOakk-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="286.5" y="396" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Btv_CyVeGUCVNPXlEjLH-3" parent="1" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#01A88D;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sagemaker;" value="SAGEMAKER ENDPOINT" vertex="1">
+          <mxGeometry height="78" width="78" x="210" y="354" as="geometry" />
+        </mxCell>
+        <mxCell id="Btv_CyVeGUCVNPXlEjLH-6" edge="1" parent="1" source="Btv_CyVeGUCVNPXlEjLH-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="Btv_CyVeGUCVNPXlEjLH-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Btv_CyVeGUCVNPXlEjLH-4" parent="1" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#01A88D;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sagemaker;" value="ML INFERENCE ENGINE" vertex="1">
+          <mxGeometry height="78" width="78" x="540" y="354" as="geometry" />
+        </mxCell>
+        <mxCell id="Btv_CyVeGUCVNPXlEjLH-5" parent="1" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" value="ML TRAINED MODEL" vertex="1">
+          <mxGeometry height="78" width="78" x="540" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="Btv_CyVeGUCVNPXlEjLH-7" edge="1" parent="1" source="qdIRdacZ9aRxpwBwOakk-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" target="Btv_CyVeGUCVNPXlEjLH-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Btv_CyVeGUCVNPXlEjLH-8" parent="1" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#01A88D;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sagemaker;" value="ML MODEL TRAINING" vertex="1">
+          <mxGeometry height="78" width="78" x="760" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="Btv_CyVeGUCVNPXlEjLH-9" edge="1" parent="1" source="Btv_CyVeGUCVNPXlEjLH-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="760" y="230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Btv_CyVeGUCVNPXlEjLH-16" edge="1" parent="1" source="Btv_CyVeGUCVNPXlEjLH-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="Btv_CyVeGUCVNPXlEjLH-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Btv_CyVeGUCVNPXlEjLH-10" parent="1" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.aws_glue_data_quality;" value="DATA PREPROCESSING" vertex="1">
+          <mxGeometry height="78" width="78" x="760" y="354" as="geometry" />
+        </mxCell>
+        <mxCell id="Btv_CyVeGUCVNPXlEjLH-11" edge="1" parent="1" source="Btv_CyVeGUCVNPXlEjLH-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" target="Btv_CyVeGUCVNPXlEjLH-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Btv_CyVeGUCVNPXlEjLH-12" parent="1" style="verticalLabelPosition=bottom;aspect=fixed;html=1;shape=mxgraph.salesforce.customer_360;fillColor=none;strokeColor=none;" value="QUALITY CONTROL SYSTEM" vertex="1">
+          <mxGeometry height="54.6" width="60" x="50" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="Btv_CyVeGUCVNPXlEjLH-13" edge="1" parent="1" source="Btv_CyVeGUCVNPXlEjLH-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.244;entryY=0.41;entryDx=0;entryDy=0;entryPerimeter=0;" target="Btv_CyVeGUCVNPXlEjLH-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Btv_CyVeGUCVNPXlEjLH-14" connectable="0" parent="Btv_CyVeGUCVNPXlEjLH-13" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="RAW IMAGES" vertex="1">
+          <mxGeometry relative="1" x="-0.3186" y="-4" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Btv_CyVeGUCVNPXlEjLH-15" parent="1" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" value="TRAINING AND TEST DATASET" vertex="1">
+          <mxGeometry height="78" width="78" x="940" y="354" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
