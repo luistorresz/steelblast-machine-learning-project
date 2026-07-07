@@ -76,6 +76,50 @@
 
 ---
 
+## 4. Bias Analysis
+
+### Bias Under Lighting Perturbations
+
+#### Key Findings
+
+- Across moderate lighting perturbations (darkening, brightening, intensity offsets, and contrast variations), the **SVM (GLCM + DWT)** model demonstrates greater stability, maintaining higher accuracy and generally exhibiting lower or comparable prediction flip rates.
+- **Stress test:** Under severe overexposure (**bright_50**), **ResNet50** is substantially more robust. Although both models experience performance degradation, ResNet50 shows a smaller decline in accuracy and a considerably lower flip rate than SVM.
+
+#### Implications for Quality Control
+
+- **SVM (GLCM + DWT)** is the preferred choice in well-controlled steel-blast inspection environments, as it is largely insensitive to realistic lighting variations.
+- **ResNet50** is more fault-tolerant when illumination conditions cannot be reliably controlled, particularly under severe overexposure.
+
+---
+
+### Bias Between Classes
+
+#### ResNet50
+
+- ResNet50 exhibits a clear bias toward the **Good** class.
+- **Good recall:** 0.9928
+- **Not-good recall:** 0.8571
+- **Recall gap:** 0.1357, indicating a substantial imbalance in class-wise performance.
+- **Interpretation:** ResNet50 is conservative when identifying defects. Consequently, it minimizes false alarms on good parts but is more likely to miss actual defective samples.
+
+#### SVM (GLCM + DWT)
+
+- SVM is considerably more balanced, with a slight bias toward the **Not-good** class.
+- **Good recall:** 0.9275
+- **Not-good recall:** 0.9464
+- **Recall gap:** 0.0189, which is significantly smaller than that of ResNet50.
+- **Interpretation:** SVM is more willing to flag potential defects, leading to higher defect detection rates at the cost of an increased number of false positives.
+
+
+#### Practical Implications for Quality Control
+
+- When **missing a defect is the primary risk**, **SVM (GLCM + DWT)** provides the safer bias profile because of its stronger ability to detect defective parts.
+- When **false rejections are more costly than missed defects**, **ResNet50** provides the safer bias profile because it is less likely to classify good parts as defective.
+
+---
+
+
+
 ## 4. Overall Assessment
 
 1.	For most quality control applications, SVM is better overall.
