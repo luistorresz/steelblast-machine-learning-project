@@ -4,40 +4,35 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="3GNQFcIypI1lWF14nDhn-11" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="3GNQFcIypI1lWF14nDhn-4">
+        <mxCell id="3GNQFcIypI1lWF14nDhn-11" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="3GNQFcIypI1lWF14nDhn-2">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="360" y="90" as="sourcePoint" />
+            <mxPoint x="360" y="160" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="3GNQFcIypI1lWF14nDhn-13" edge="1" parent="1" source="3GNQFcIypI1lWF14nDhn-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="3GNQFcIypI1lWF14nDhn-3">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="3GNQFcIypI1lWF14nDhn-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&amp;nbsp;GLCM FEATURE EXTRACTION" vertex="1">
-          <mxGeometry height="60" width="120" x="300" y="260" as="geometry" />
+          <mxGeometry height="60" width="120" x="300" y="160" as="geometry" />
         </mxCell>
         <mxCell id="3GNQFcIypI1lWF14nDhn-14" edge="1" parent="1" source="3GNQFcIypI1lWF14nDhn-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="3GNQFcIypI1lWF14nDhn-6">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="3GNQFcIypI1lWF14nDhn-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&amp;nbsp;DWT FEATURE EXTRACTION" vertex="1">
-          <mxGeometry height="60" width="120" x="300" y="350" as="geometry" />
-        </mxCell>
-        <mxCell id="3GNQFcIypI1lWF14nDhn-12" edge="1" parent="1" source="3GNQFcIypI1lWF14nDhn-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="3GNQFcIypI1lWF14nDhn-2">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="3GNQFcIypI1lWF14nDhn-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="ILLUMINATION NORMALIZATION PREPROCESSING" vertex="1">
-          <mxGeometry height="60" width="120" x="300" y="160" as="geometry" />
+          <mxGeometry height="60" width="120" x="300" y="250" as="geometry" />
         </mxCell>
         <mxCell id="3GNQFcIypI1lWF14nDhn-15" edge="1" parent="1" source="3GNQFcIypI1lWF14nDhn-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="3GNQFcIypI1lWF14nDhn-7">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="3GNQFcIypI1lWF14nDhn-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="STRATIFIED K-FOLD CV USING SVM CLASSIFIER" vertex="1">
-          <mxGeometry height="60" width="120" x="300" y="470" as="geometry" />
+          <mxGeometry height="60" width="120" x="300" y="370" as="geometry" />
         </mxCell>
         <mxCell id="3GNQFcIypI1lWF14nDhn-18" edge="1" parent="1" source="3GNQFcIypI1lWF14nDhn-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="3GNQFcIypI1lWF14nDhn-9">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="3GNQFcIypI1lWF14nDhn-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="SVM&#39;S HYPER-PARAMETER SELECTION" vertex="1">
-          <mxGeometry height="60" width="120" x="300" y="570" as="geometry" />
+          <mxGeometry height="60" width="120" x="300" y="470" as="geometry" />
         </mxCell>
         <mxCell id="3GNQFcIypI1lWF14nDhn-16" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="3GNQFcIypI1lWF14nDhn-9">
           <mxGeometry relative="1" as="geometry">
