@@ -1,38 +1,20 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Page-1" id="Prmxn7w634DNLxsjH7Ni">
-    <mxGraphModel dx="1204" dy="761" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1204" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="3GNQFcIypI1lWF14nDhn-11" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="3GNQFcIypI1lWF14nDhn-2">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="360" y="90" as="sourcePoint" />
-            <mxPoint x="360" y="160" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
         <mxCell id="3GNQFcIypI1lWF14nDhn-13" edge="1" parent="1" source="3GNQFcIypI1lWF14nDhn-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="3GNQFcIypI1lWF14nDhn-3">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="3GNQFcIypI1lWF14nDhn-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&amp;nbsp;GLCM FEATURE EXTRACTION" vertex="1">
-          <mxGeometry height="60" width="120" x="300" y="160" as="geometry" />
+          <mxGeometry height="60" width="160" x="260" y="160" as="geometry" />
         </mxCell>
-        <mxCell id="3GNQFcIypI1lWF14nDhn-14" edge="1" parent="1" source="3GNQFcIypI1lWF14nDhn-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="3GNQFcIypI1lWF14nDhn-6">
+        <mxCell id="8fe_8UMAdW8Jk-a4LM5z-5" edge="1" parent="1" source="3GNQFcIypI1lWF14nDhn-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="8fe_8UMAdW8Jk-a4LM5z-1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="3GNQFcIypI1lWF14nDhn-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&amp;nbsp;DWT FEATURE EXTRACTION" vertex="1">
-          <mxGeometry height="60" width="120" x="300" y="250" as="geometry" />
-        </mxCell>
-        <mxCell id="3GNQFcIypI1lWF14nDhn-15" edge="1" parent="1" source="3GNQFcIypI1lWF14nDhn-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="3GNQFcIypI1lWF14nDhn-7">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="3GNQFcIypI1lWF14nDhn-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="STRATIFIED K-FOLD CV USING SVM CLASSIFIER" vertex="1">
-          <mxGeometry height="60" width="120" x="300" y="370" as="geometry" />
-        </mxCell>
-        <mxCell id="3GNQFcIypI1lWF14nDhn-18" edge="1" parent="1" source="3GNQFcIypI1lWF14nDhn-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="3GNQFcIypI1lWF14nDhn-9">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="3GNQFcIypI1lWF14nDhn-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="SVM&#39;S HYPER-PARAMETER SELECTION" vertex="1">
-          <mxGeometry height="60" width="120" x="300" y="470" as="geometry" />
+          <mxGeometry height="60" width="160" x="260" y="250" as="geometry" />
         </mxCell>
         <mxCell id="3GNQFcIypI1lWF14nDhn-16" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="3GNQFcIypI1lWF14nDhn-9">
           <mxGeometry relative="1" as="geometry">
@@ -48,11 +30,32 @@
         <mxCell id="3GNQFcIypI1lWF14nDhn-10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="CLASSIFICATION METRICS" vertex="1">
           <mxGeometry height="60" width="120" x="520" y="270" as="geometry" />
         </mxCell>
-        <mxCell id="3GNQFcIypI1lWF14nDhn-19" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" value="STEEL SURFACES TRAINING IMAGES" vertex="1">
-          <mxGeometry height="80" width="110" x="305" y="10" as="geometry" />
+        <mxCell id="8fe_8UMAdW8Jk-a4LM5z-4" edge="1" parent="1" source="3GNQFcIypI1lWF14nDhn-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="3GNQFcIypI1lWF14nDhn-2">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="3GNQFcIypI1lWF14nDhn-20" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" value="STEEL SURFACES TEST IMAGES" vertex="1">
+        <mxCell id="3GNQFcIypI1lWF14nDhn-19" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" value="&amp;nbsp;TRAINING IMAGES" vertex="1">
+          <mxGeometry height="80" width="110" x="285" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="3GNQFcIypI1lWF14nDhn-20" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" value="&amp;nbsp;TEST IMAGES" vertex="1">
           <mxGeometry height="80" width="110" x="525" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="8fe_8UMAdW8Jk-a4LM5z-6" edge="1" parent="1" source="8fe_8UMAdW8Jk-a4LM5z-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="8fe_8UMAdW8Jk-a4LM5z-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8fe_8UMAdW8Jk-a4LM5z-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="MODEL CONFIGURATION (SVM CLASSIFIER)" vertex="1">
+          <mxGeometry height="60" width="160" x="260" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="8fe_8UMAdW8Jk-a4LM5z-7" edge="1" parent="1" source="8fe_8UMAdW8Jk-a4LM5z-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="8fe_8UMAdW8Jk-a4LM5z-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8fe_8UMAdW8Jk-a4LM5z-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;HYPERPARAMETERS SEARCH&amp;nbsp;&lt;/div&gt;&lt;div&gt;(STRATIFIED CV)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="160" x="260" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="8fe_8UMAdW8Jk-a4LM5z-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="BEST MODEL SELECTION" vertex="1">
+          <mxGeometry height="60" width="160" x="260" y="575" as="geometry" />
+        </mxCell>
+        <mxCell id="8fe_8UMAdW8Jk-a4LM5z-8" edge="1" parent="1" source="8fe_8UMAdW8Jk-a4LM5z-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.008;entryY=0.617;entryDx=0;entryDy=0;entryPerimeter=0;" target="3GNQFcIypI1lWF14nDhn-9">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
