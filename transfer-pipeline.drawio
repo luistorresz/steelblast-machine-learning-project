@@ -57,7 +57,7 @@
         <mxCell id="CchPPJZIBJB1su9VFTO4-2" edge="1" parent="1" source="3GNQFcIypI1lWF14nDhn-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.517;entryY=0.167;entryDx=0;entryDy=0;entryPerimeter=0;" target="3GNQFcIypI1lWF14nDhn-2">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="CchPPJZIBJB1su9VFTO4-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="BINARY PREDICTION LAYER (SIGMOID)" vertex="1">
+        <mxCell id="CchPPJZIBJB1su9VFTO4-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="BINARY CLASSIFICATION LAYER (SIGMOID)" vertex="1">
           <mxGeometry height="60" width="212.5" x="269.5" y="620" as="geometry" />
         </mxCell>
         <mxCell id="CchPPJZIBJB1su9VFTO4-21" edge="1" parent="1" source="CchPPJZIBJB1su9VFTO4-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="CchPPJZIBJB1su9VFTO4-10">
