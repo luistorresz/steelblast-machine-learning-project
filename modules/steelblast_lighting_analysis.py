@@ -8,7 +8,7 @@ import json
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
-from steelblast_classic_features import (
+from .steelblast_classic_features import (
     FeatureExtractionConfig,
     extract_features_from_image,
     normalize_illumination,
