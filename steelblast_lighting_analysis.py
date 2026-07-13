@@ -45,6 +45,8 @@ class RobustnessSummary:
     passed: bool
     min_claim_accuracy: float
     max_claim_flip_rate: float
+    max_claim_abs_recall_delta: float | None
+    max_abs_recall_delta_threshold: float | None
     note: str
 
 
@@ -88,6 +90,9 @@ def evaluate_lighting_robustness(
     normal_lighting_tests: set[str] = NORMAL_LIGHTING_TESTS,
 ) -> list[dict[str, object]]:
     baseline_predictions = predict_for_perturbation("baseline")
+    baseline_matrix = confusion_matrix(y_true, baseline_predictions, labels=[0, 1])
+    baseline_good_recall = _safe_recall(baseline_matrix[0, 0], baseline_matrix[0].sum())
+    baseline_not_good_recall = _safe_recall(baseline_matrix[1, 1], baseline_matrix[1].sum())
 
     rows: list[dict[str, object]] = []
     for perturbation in perturbations:
@@ -97,6 +102,8 @@ def evaluate_lighting_robustness(
         flips = int(np.sum(y_variant != baseline_predictions))
         good_recall = _safe_recall(matrix_variant[0, 0], matrix_variant[0].sum())
         not_good_recall = _safe_recall(matrix_variant[1, 1], matrix_variant[1].sum())
+        good_recall_delta = float(good_recall - baseline_good_recall)
+        not_good_recall_delta = float(not_good_recall - baseline_not_good_recall)
 
         rows.append(
             {
@@ -106,6 +113,10 @@ def evaluate_lighting_robustness(
                 "flip_rate_vs_baseline": float(flips / len(y_true)),
                 "good_recall": good_recall,
                 "not_good_recall": not_good_recall,
+                "good_recall_delta_vs_baseline": good_recall_delta,
+                "not_good_recall_delta_vs_baseline": not_good_recall_delta,
+                "abs_good_recall_delta_vs_baseline": float(abs(good_recall_delta)),
+                "abs_not_good_recall_delta_vs_baseline": float(abs(not_good_recall_delta)),
                 "confusion_matrix": matrix_variant.tolist(),
                 "included_in_robustness_claim": perturbation in normal_lighting_tests,
             }
@@ -120,11 +131,23 @@ def summarize_lighting_robustness(
     criterion: str,
     min_accuracy_threshold: float,
     max_flip_rate_threshold: float,
+    max_abs_recall_delta_threshold: float | None,
     note: str,
 ) -> dict[str, object]:
     claim_rows = [row for row in rows if bool(row["included_in_robustness_claim"])]
     min_claim_accuracy = min(float(row["accuracy"]) for row in claim_rows)
     max_claim_flip_rate = max(float(row["flip_rate_vs_baseline"]) for row in claim_rows)
+    max_claim_abs_recall_delta = max(
+        max(
+            float(row["abs_good_recall_delta_vs_baseline"]),
+            float(row["abs_not_good_recall_delta_vs_baseline"]),
+        )
+        for row in claim_rows
+    )
+
+    passes_recall_delta = True
+    if max_abs_recall_delta_threshold is not None:
+        passes_recall_delta = max_claim_abs_recall_delta <= max_abs_recall_delta_threshold
 
     summary = RobustnessSummary(
         claim=claim,
@@ -132,9 +155,12 @@ def summarize_lighting_robustness(
         passed=bool(
             min_claim_accuracy >= min_accuracy_threshold
             and max_claim_flip_rate <= max_flip_rate_threshold
+            and passes_recall_delta
         ),
         min_claim_accuracy=float(min_claim_accuracy),
         max_claim_flip_rate=float(max_claim_flip_rate),
+        max_claim_abs_recall_delta=float(max_claim_abs_recall_delta),
+        max_abs_recall_delta_threshold=max_abs_recall_delta_threshold,
         note=note,
     )
     return {
@@ -143,6 +169,8 @@ def summarize_lighting_robustness(
         "passed": summary.passed,
         "min_claim_accuracy": summary.min_claim_accuracy,
         "max_claim_flip_rate": summary.max_claim_flip_rate,
+        "max_claim_abs_recall_delta": summary.max_claim_abs_recall_delta,
+        "max_abs_recall_delta_threshold": summary.max_abs_recall_delta_threshold,
         "note": summary.note,
     }
 
@@ -169,6 +197,7 @@ def run_robustness_analysis(
     min_accuracy_threshold: float,
     max_flip_rate_threshold: float,
     note: str,
+    max_abs_recall_delta_threshold: float | None = None,
 ) -> dict[str, object]:
     rows = evaluate_lighting_robustness(
         y_true=y_test,
@@ -180,6 +209,7 @@ def run_robustness_analysis(
         criterion=criterion,
         min_accuracy_threshold=min_accuracy_threshold,
         max_flip_rate_threshold=max_flip_rate_threshold,
+        max_abs_recall_delta_threshold=max_abs_recall_delta_threshold,
         note=note,
     )
 
