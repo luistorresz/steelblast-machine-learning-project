@@ -4,8 +4,6 @@ steelblast_svm_glcm_dwt_metrics.json
 steelblast_svm_glcm_dwt_smoke_metrics.json
 steelblast_svm_glcm_dwt_smoke.joblib
 steelblast_svm_glcm_dwt.joblib
-steelblast_svm_glcm_dwt_heatmaps/
-steelblast_svm_glcm_dwt_focus_heatmaps/
 __pycache__/*
 .DS_Store
 dataset_samples.png
@@ -32,3 +30,4 @@ steelblast_svm_bright25_search_20260703_163405.json
 steelblast_resnet50_baseline_full_best.h5
 heatmap_generation_metrics_*.json
 modules/__pycache__/*
+.vscode/settings.json
